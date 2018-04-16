@@ -17,18 +17,16 @@
 #define PUSH_RATE 20
 #define PUSH_FREQ 20
 
-
 typedef struct {
-    uint8_t steps;
-    uint8_t freq;
+   int steps;
+   int freq;
 } LeverPhase;
 
 typedef struct {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
+    int r;
+    int g;
+    int b;
 } RGB;
-
 
 void manpulator_up();
 
@@ -39,7 +37,5 @@ void manpulator_take();
 void manpulator_drop();
 
 void manipulator_sort();
-
-
 
 #endif //EUROBOT2018R1_MANIPULATOR_H

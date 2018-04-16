@@ -31,7 +31,7 @@ int cmp(Weight weight, Weight weight1) {
     if (weight.steps != weight1.steps)
         return weight.steps - weight1.steps;
     else return abs(weight.shift) - abs(weight1.shift);
-    //else return abs(weight.shift + 1) - abs(weight1.shift + 1);
+    //else return abs(weight.shift - 1) - abs(weight1.shift - 1); //платформа поворачивается влево!
 }
 
 void freeCubes(char *cube, char *cube1, const unsigned char *pat3) {
@@ -49,7 +49,7 @@ void freeCubes(char *cube, char *cube1, const unsigned char *pat3) {
                      ((tmp & 0b10000u) != 0) * 4u);
 }
 
-void generatePattern(char pattern[CUBES_NUM], const char permutation[3]) {
+void generatePattern(char *pattern, const char *permutation) {
     int k = 0;
     for (int i = 0; i < PER_LEN; i++) {
         int shift = permutation[i];
@@ -60,13 +60,13 @@ void generatePattern(char pattern[CUBES_NUM], const char permutation[3]) {
 
 void normalizePattern(char pattern[CUBES_NUM]) {
     char rows[CUBES_NUM] = {pattern[0] % (char) 2, 1, 0, 1, 0};
-    for (int i = 0; i < CUBES_NUM - 1; i++) {
+    for (int i = 0; i < 2; i++) {
         char cube = pattern[i];
         char cube1 = pattern[i + 1];
         char inv_cube = inversions[cube];
-        if (i < 2 && rows[cube] != rows[cube1] && inv_cube != pattern[0])
+        if (rows[cube] != rows[cube1] && inv_cube != pattern[0])
             rows[inv_cube] = !rows[inv_cube];
-        if (i < 2 && inversions[cube] == cube1)
+        if (inversions[cube] == cube1)
             rows[cube] += 2;
     }
 
@@ -79,8 +79,8 @@ void normalizePattern(char pattern[CUBES_NUM]) {
     }
 }
 
-Weight patternWeight(char initCube, char *pattern) {
-    char step = diff(initCube, pattern[0]);
+Weight patternWeight(char *pattern) {
+    char step = diff(INIT_CUBE, pattern[0]);
     Weight weight = {.steps = (char) abs(step), .shift = step};
     for (int j = 0; j < CUBES_NUM - 1; j++) {
         step = diff(pattern[j], pattern[j + 1]);
@@ -90,7 +90,7 @@ Weight patternWeight(char initCube, char *pattern) {
     return weight;
 }
 
-Step *getSequence(int *sequenceLen, const unsigned char pat3[PAT3_LEN]) {
+Step *sequence(int *sequenceLen, const unsigned char *pat3) {
     proto_pattern[1] = pat3[0];
     proto_pattern[2] = pat3[1];
     proto_pattern[3] = pat3[2];
@@ -109,7 +109,7 @@ Step *getSequence(int *sequenceLen, const unsigned char pat3[PAT3_LEN]) {
         generatePattern(pat, permutations[i % 6]);
         if (pat[0]) normalizePattern(pat);
 
-        Weight weight = pat[0] ? patternWeight(initCube, pat) :
+        Weight weight = pat[0] ? patternWeight(pat) :
                         (Weight) {.steps = SCHAR_MAX, .shift = SCHAR_MAX};
         if (cmp(weight, minWeight) < 0) {
             minWeight = weight;
@@ -119,7 +119,7 @@ Step *getSequence(int *sequenceLen, const unsigned char pat3[PAT3_LEN]) {
 
     int j = 0;
     Step *sequence = malloc(CUBES_NUM * sizeof(int));
-    sequence[j++].step = diff(initCube, pattern[0]);
+    sequence[j++].step = diff(INIT_CUBE, pattern[0]);
     for (int i = 0; i < CUBES_NUM - 1; i++) {
         char step = diff(pattern[i], pattern[i + 1]);
         if (step) sequence[j++].step = step;

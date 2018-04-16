@@ -7,7 +7,9 @@
 
 #define CUBES_NUM 5
 #define EDGE_CUBES_NUM 4
+#define INIT_CUBE 1
 #define NULL_CUBE 5
+
 #define PATTERNS_NUM 12
 #define PAT3_LEN 3
 #define PER_LEN 3
@@ -28,12 +30,12 @@ int cmp(Weight weight, Weight weight1);
 
 void freeCubes(char *cube, char *cube1, const unsigned char *pat3);
 
-void generatePattern(char pattern[CUBES_NUM], const char permutation[PER_LEN]);
+void generatePattern(char *pattern, const char *permutation);
 
-void normalizePattern(char pattern[CUBES_NUM]);
+void normalizePattern(char *pattern);
 
-Weight patternWeight(char init_cube, char pattern[CUBES_NUM]);
+Weight patternWeight(char *pattern);
 
-Step *getSequence(int *sequenceLen, char initCube, const unsigned char pat3[PAT3_LEN]);
+Step *sequence(int *sequenceLen, const unsigned char *pat3);
 
 #endif //EUROBOT2018R1_CUBES_H
